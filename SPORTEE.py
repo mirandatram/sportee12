@@ -387,49 +387,74 @@ ny_subset = filtered_subset[[
 
 print("starting with AI answers")
 
-import openai
-import streamlit as st
-from config import get_openai_api_key
 
-# Hämta API-nyckeln från miljövariabel
-api_key = get_openai_api_key()
+client = OpenAI(api_key=st.secrets['OPEN_API_KEY'])
 
-# Använd API-nyckeln för att skapa OpenAI-klienten
-client = openai.Client(api_key=api_key)
+# if:
 
-# Resten av din kod
+#     # Använd API-nyckeln för att skapa OpenAI-klienten
+#     client = openai.Client(api_key=)
+
+#     # Resten av din kod
+#     number = 5 
+#     temp = st.empty()
+
+#     with temp.container():
+#         st.write("Laddar GPT...")
+#         for i in range(min(len(ny_subset), number)):
+#             st.write(f'#{i}')
+#             with st.expander(f"Jobbannons {i+1} - {ny_subset['headline'].iloc[i]}"):
+#                 st.write("-------------------------------------------------")
+#                 response = client.chat.completions.create(
+#                     model="gpt-3.5-turbo",
+#                     messages=[
+#                         {"role": "system", "content": """Du är expert på att skriva effektiva och snygga jobbannonser. 
+#                         Alla annonser ska vara kortfattade, ha enhetliga rubriker och innehåll. 
+#                          Skriv varje jobbannons på detta sätt.
+#                          """},
+#                         {"role": "user", "content": f"Sammanfatta denna annons till max 500 ord: {filtered_subset['description.text'].iloc[i]}"},
+#                     ]
+#                 )
+
+#                 for choice in response.choices:
+#                     simplified_description = choice.message.content
+#                     st.write(f"{simplified_description}")
+
 number = 5 
-temp = st.empty()
 
-with temp.container():
-    print("Laddar gpt")
-    for i in range(min(len(ny_subset), number)):
-        print(f'#{i}')
-        with st.expander(f"Jobbannons {i+1} - {ny_subset['headline'].iloc[i]}"):
-            st.write("-------------------------------------------------")
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": """Du är expert på att skriva effektiva och snygga jobbannonser. 
-                    Alla annonser ska vara kortfattade, ha enhetliga rubriker och innehåll. 
-                     Skriv varje jobbannons på detta sätt.
-                     """},
-                    {"role": "user", "content": f"Sammanfatta denna annons till max 500 ord: {filtered_subset['description.text'].iloc[i]}"},
-                ]
-            )
+required_columns = ['headline', 'description.text']
+missing_columns = [col for col in required_columns if col not in ny_subset.columns]
 
-            for choice in response.choices:
-                simplified_description = response.choices[0].message.content
-                st.write(f"{simplified_description}")
+if missing_columns:
+    st.error(f"Missing columns in the data: {', '.join(missing_columns)}")
+else:
+    number = 5
+    temp = st.empty()
+    with temp.container():
+        print(f"Loading GPT")
+        for i in range(min(len(ny_subset), number)):
+            print(f'#{i}')
+            headline = ny_subset['headline'].iloc[i]
+            description_text = ny_subset['description.text'].iloc[i]
 
-
-# client = openai.Client(api_key='sk-proj-FI0h0krqyB93Y5PyWe6xT3BlbkFJb1OdRfWCTE7BXmuHgCpF')
-
-# client = OpenAI(api_key=key)
-# # # Ange din API-nyckel
-# client.api_key = config.py
-
-# client = openai.Client(api_key=)
+            with st.expander(f"Job Listing {i+1} - {headline}"):
+                st.write("-------------------------------------------------")
+                # Call OpenAI API to rephrase the job description
+                try:
+                    response = client.chat.completions.create(
+                        model="gpt-3.5-turbo",
+                        messages=[
+                            {"role": "system", "content": """You are an expert in writing effective and attractive job listings. 
+                            All listings should be concise, have uniform headlines and content. 
+                            Write each job listing in this way."""},
+                            {"role": "user", "content": f"Summarize this job listing to a maximum of 200 words: {description_text}"},
+                        ]
+                    )
+                    # Extract and display the generated rephrased description
+                    simplified_description = response.choices[0].message.content
+                    st.write(simplified_description)
+                except Exception as e:
+                    st.error(f"An error occurred: {str(e)}")
 
 
 # #antalet jobb
@@ -487,41 +512,6 @@ if len(ny_subset) > number:
                         simplified_description = choice.message.content
                         st.write(f"{simplified_description}")
 
-# number = 5 
-
-# required_columns = ['headline', 'description.text']
-# missing_columns = [col for col in required_columns if col not in ny_subset.columns]
-
-# if missing_columns:
-#     st.error(f"Missing columns in the data: {', '.join(missing_columns)}")
-# else:
-#     number = 5
-#     temp = st.empty()
-#     with temp.container():
-#         print(f"Loading GPT")
-#         for i in range(min(len(ny_subset), number)):
-#             print(f'#{i}')
-#             headline = ny_subset['headline'].iloc[i]
-#             description_text = ny_subset['description.text'].iloc[i]
-
-#             with st.expander(f"Job Listing {i+1} - {headline}"):
-#                 st.write("-------------------------------------------------")
-#                 # Call OpenAI API to rephrase the job description
-#                 try:
-#                     response = client.chat.completions.create(
-#                         model="gpt-3.5-turbo",
-#                         messages=[
-#                             {"role": "system", "content": """You are an expert in writing effective and attractive job listings. 
-#                             All listings should be concise, have uniform headlines and content. 
-#                             Write each job listing in this way."""},
-#                             {"role": "user", "content": f"Summarize this job listing to a maximum of 200 words: {description_text}"},
-#                         ]
-#                     )
-#                     # Extract and display the generated rephrased description
-#                     simplified_description = response.choices[0].message.content
-#                     st.write(simplified_description)
-#                 except Exception as e:
-#                     st.error(f"An error occurred: {str(e)}")
 
 
 
