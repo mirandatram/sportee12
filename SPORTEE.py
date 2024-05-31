@@ -413,12 +413,11 @@ print("starting with AI answers")
 
 
 
-from config import OPENAI_API_KEY
-
-print(OPENAI_API_KEY)
+client = openai.Client(api_key='sk-proj-FI0h0krqyB93Y5PyWe6xT3BlbkFJb1OdRfWCTE7BXmuHgCpF')
 
 
-client = openai.Client(api_key=OPENAI_API_KEY)
+
+#client = openai.Client(api_key=OPENAI_API_KEY)
 
 
 #antalet jobb
