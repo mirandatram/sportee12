@@ -1,0 +1,80 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+dataset.jsonl
+
+config.py
+
+
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+# Only exists if Bazel was run
+/bazel-out
+
+# dependencies
+/node_modules
+server/node_modules
+
+# profiling files
+chrome-profiler-events*.json
+
+# IDEs and editors
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - JETBrains
+.idea/*
+!.idea/inspectionProfiles
+!.idea/scopes
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# misc
+/.angular/cache
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# system files
+.DS_Store
+Thumbs.db
+
+# polaris
+.synopsys/
+.polaris-coverity.zip
+
+# storybook & chromatic
+storybook-static
+build-storybook.log
+chromatic.log
+chromatic-build-*.xml
+chromatic-diagnostics.json
+desktop.ini
+test1.py
+
+
+# Pickle (för clustering)
+
+kmeans.pkl
+preprocessed_text.csv
+stemmer_sv.pkl
+stop_words_en.pkl
+stop_words_sv.pkl
+vectorizer.pkl
