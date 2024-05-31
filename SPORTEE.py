@@ -387,51 +387,26 @@ ny_subset = filtered_subset[[
 
 print("starting with AI answers")
 
-#antalet jobb
-# #resultaten som visas
-# with temp.container():
-#     print("Laddar gpt")
-#     for i in range(min(len(ny_subset), number)):
-#         print(f'#{i}')
-#         with st.expander(f"Jobbannons {i+1} - {ny_subset['headline'].iloc[i]}"):
-#             st.write("-------------------------------------------------")
-#             # Anropa OpenAI för att omformulera beskrivningstexten
-#             response = openai.ChatCompletion.create(
-#                 model="gpt-3.5-turbo",
-#                 messages=[
-#                     {"role": "system", "content": """Du är expert på att skriva effektiva och snygga jobbannonser. 
-#                     Alla annonser ska vara kortfattade, ha enhetliga rubriker och innehåll. 
-#                      Skriv varje jobbannons på detta sätt.
-#                      """},
-#                     {"role": "user", "content": f"Sammanfatta denna annons till max 200 ord: {filtered_subset['description.text'].iloc[i]}"},
-#                 ]
-#             )
-#             #Hämta och skriv ut den genererade omformulerade beskrivningen
-#             for choice in response.choices:
-#                 simplified_description = choice.message.content
-#                 st.write(f"{simplified_description}")
+import openai
+import streamlit as st
+from config import get_openai_api_key
 
+# Hämta API-nyckeln från miljövariabel
+api_key = get_openai_api_key()
 
+# Använd API-nyckeln för att skapa OpenAI-klienten
+client = openai.Client(api_key=api_key)
 
-client = openai.Client(api_key='sk-proj-FI0h0krqyB93Y5PyWe6xT3BlbkFJb1OdRfWCTE7BXmuHgCpF')
-
-
-
-#client = openai.Client(api_key=OPENAI_API_KEY)
-
-
-#antalet jobb
+# Resten av din kod
 number = 5 
 temp = st.empty()
 
-#resultaten som visas
 with temp.container():
     print("Laddar gpt")
     for i in range(min(len(ny_subset), number)):
         print(f'#{i}')
         with st.expander(f"Jobbannons {i+1} - {ny_subset['headline'].iloc[i]}"):
             st.write("-------------------------------------------------")
-            # Anropa OpenAI för att omformulera beskrivningstexten
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
@@ -443,10 +418,47 @@ with temp.container():
                 ]
             )
 
-            #Hämta och skriv ut den genererade omformulerade beskrivningen
             for choice in response.choices:
-                simplified_description = choice.message.content
+                simplified_description = response.choices[0].message.content
                 st.write(f"{simplified_description}")
+
+
+# client = openai.Client(api_key='sk-proj-FI0h0krqyB93Y5PyWe6xT3BlbkFJb1OdRfWCTE7BXmuHgCpF')
+
+# client = OpenAI(api_key=key)
+# # # Ange din API-nyckel
+# client.api_key = config.py
+
+# client = openai.Client(api_key=)
+
+
+# #antalet jobb
+# number = 5 
+# temp = st.empty()
+
+# #resultaten som visas
+# with temp.container():
+#     print("Laddar gpt")
+#     for i in range(min(len(ny_subset), number)):
+#         print(f'#{i}')
+#         with st.expander(f"Jobbannons {i+1} - {ny_subset['headline'].iloc[i]}"):
+#             st.write("-------------------------------------------------")
+#             # Anropa OpenAI för att omformulera beskrivningstexten
+#             response = client.chat.completions.create(
+#                 model="gpt-3.5-turbo",
+#                 messages=[
+#                     {"role": "system", "content": """Du är expert på att skriva effektiva och snygga jobbannonser. 
+#                     Alla annonser ska vara kortfattade, ha enhetliga rubriker och innehåll. 
+#                      Skriv varje jobbannons på detta sätt.
+#                      """},
+#                     {"role": "user", "content": f"Sammanfatta denna annons till max 500 ord: {filtered_subset['description.text'].iloc[i]}"},
+#                 ]
+#             )
+
+#             #Hämta och skriv ut den genererade omformulerade beskrivningen
+#             for choice in response.choices:
+#                 simplified_description = choice.message.content
+#                 st.write(f"{simplified_description}")
 
 
 #visa fler alternativ
@@ -511,57 +523,6 @@ if len(ny_subset) > number:
 #                 except Exception as e:
 #                     st.error(f"An error occurred: {str(e)}")
 
-
-# temp = st.empty()        
-# with temp.container():
-#     st.write("Loading GPT")
-#     for i in range(min(len(ny_subset), number)):
-#         st.write(f'#{i}')
-#         headline = ny_subset['headline'].iloc[i]
-#         description_text = ny_subset['description.text'].iloc[i]
-        
-#         with st.expander(f"Job Listing {i+1} - {headline}"):
-#             st.write("-------------------------------------------------")
-#             # Call OpenAI API to rephrase the job description
-            
-#             response = client.chat.completions.create(
-#                 model="gpt-3.5-turbo",
-#                 messages=[
-#                     {"role": "system", "content": """You are an expert in writing effective and attractive job listings. 
-#                     All listings should be concise, have uniform headlines and content. 
-#                     Write each job listing in this way."""},
-#                     {"role": "user", "content": f"Summarize this job listing to a maximum of 200 words: {description_text}"},
-#                 ]
-#             )
-#         # Extract and display the generated rephrased description
-#         simplified_description = response['choices'][0]['message']['content']
-#         st.write(simplified_description)
-        
-# #visa fler alternativ
-# if len(ny_subset) > number:
-#     if st.button('Visa fler'):
-#         temp.empty()
-#         number += 5
-#         temp = st.empty()
-#         with temp.container():
-#             for i in range(number - 5, min(len(ny_subset), number)):
-#                 with st.expander(f"Jobbannons {i+1} - {ny_subset['headline'].iloc[i]}"):
-#                     st.write("-------------------------------------------------")
-#                     response = client.chat.completions.create(
-#                         model="text-davinc-002",
-#                         messages=[
-#                             {"role": "system", "content": """Du är expert på att skriva effektiva och snygga jobbannonser. 
-#                     Alla annonser ska vara kortfattade, ha enhetliga rubriker och innehåll. 
-#                      Skriv varje jobbannons på detta sätt."""},
-#                             {"role": "user", "content": f"Sammanfatta denna annons till max 200 ord: {filtered_subset['description.text'].iloc[i]}"},
-#                         ]
-#                     )
-
-#                     #Hämta och skriv ut den genererade omformulerade beskrivningen
-#                     print('GPT HAR SVARAT')
-#                     for choice in response.choices:
-#                         simplified_description = choice.message.content
-#                         st.write(f"{simplified_description}")
 
 
 #---SUPERVISED LEARNING----------------------------------------------------------------------------------------------------------------#
